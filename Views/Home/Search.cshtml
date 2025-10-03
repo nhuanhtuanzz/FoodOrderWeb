@@ -1,0 +1,274 @@
+﻿@model FoodOrderWeb.ViewModels.SearchViewModel
+@{
+    ViewData["Title"] = "Kết quả tìm kiếm";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f9fafb;
+        background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('/image/homeimage.jpeg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+    }
+
+    .search-container {
+        max-width: 800px;
+        margin: 40px auto;
+        position: relative;
+    }
+
+    .search-bar {
+        border-radius: 50px;
+        padding: 12px 20px 12px 45px;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+        .search-bar:focus {
+            border-color: #00bfa6;
+            box-shadow: 0 4px 14px rgba(0,191,166,0.25);
+        }
+
+    .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 18px;
+        transform: translateY(-50%);
+        color: #888;
+        font-size: 18px;
+    }
+
+    .btn-search {
+        border-radius: 50px;
+        background: #00bfa6;
+        border: none;
+        color: #fff;
+        padding: 0 20px;
+        transition: 0.3s;
+    }
+
+        .btn-search:hover {
+            background: #009e89;
+        }
+
+    /* Thanh filter */
+    .filter-bar {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        padding: 15px;
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 40px 0 20px 0;
+        color: #333;
+        border-left: 4px solid #00bfa6;
+        padding-left: 10px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+        }
+
+    .card-img-top {
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .price {
+        color: #e63946;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .empty-state {
+        text-align: center;
+        color: #888;
+        margin: 40px 0;
+        font-size: 16px;
+    }
+
+    /* Xóa gạch chân khi bọc thẻ a */
+    a.card-link {
+        text-decoration: none;
+        color: inherit;
+    }
+</style>
+
+<div class="container">
+    <!-- Thanh search -->
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <form asp-controller="Home" asp-action="Search" method="get" class="d-flex">
+            <input type="search" name="query" value="@Model.Query"
+                   class="form-control search-bar" placeholder="Tìm món ăn, combo, danh mục..." />
+            <button type="submit" class="btn btn-search ms-2">Tìm</button>
+        </form>
+    </div>
+
+    <!-- Thanh filter -->
+    <div class="filter-bar">
+        <form asp-controller="Home" asp-action="Search" method="get" class="row g-3 align-items-center">
+            <input type="hidden" name="query" value="@Model.Query" />
+
+            <div class="col-md-3">
+                <select name="SelectedCategory" class="form-select">
+                    <option value="">-- Tất cả danh mục --</option>
+                    @foreach (var cat in Model.AllCategories ?? Enumerable.Empty<FoodOrderWeb.Models.Category>())
+                    {
+                        <option value="@cat.Name" selected="@(cat.Name == Model.SelectedCategory)">
+                            @cat.Name
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" name="MinPrice" class="form-control" placeholder="Giá từ" value="@Model.MinPrice" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="MaxPrice" class="form-control" placeholder="Đến" value="@Model.MaxPrice" />
+            </div>
+
+            <div class="col-md-3">
+                <select name="SortBy" class="form-select">
+                    <option value="">-- Sắp xếp --</option>
+                    <option value="price_asc" selected="@(Model.SortBy == "price_asc")">Giá tăng dần</option>
+                    <option value="price_desc" selected="@(Model.SortBy == "price_desc")">Giá giảm dần</option>
+                    <option value="newest" selected="@(Model.SortBy == "newest")">Mới nhất</option>
+                    <option value="popular" selected="@(Model.SortBy == "popular")">Phổ biến</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 text-end">
+                <button type="submit" class="btn btn-success w-100">Lọc</button>
+            </div>
+        </form>
+    </div>
+
+    <h3 class="mb-4">Kết quả cho "<span class="text-success">@Model.Query</span>"</h3>
+
+    <!-- Combo -->
+    <h4 class="section-title">Combo ưu đãi</h4>
+    <div class="row">
+        @if (Model.Combos?.Any() == true)
+        {
+            @foreach (var combo in Model.Combos)
+            {
+                <div class="col-md-4 mb-4">
+                    <a asp-controller="Details" asp-action="ComboDetails" asp-route-id="@combo.ComboId" class="card-link">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>@combo.Name</h5>
+                                <p>@combo.Description</p>
+                                <p class="price">@combo.Price.ToString("C")</p>
+                                <span class="badge @(combo.IsAvailable ? "bg-success" : "bg-secondary")">
+                                    @(combo.IsAvailable ? "Còn hàng" : "Hết hàng")
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">Không có combo nào phù hợp.</div>
+        }
+    </div>
+
+    <!-- Menu Items -->
+    <h4 class="section-title">Món ăn</h4>
+    <div class="row">
+        @if (Model.MenuItems?.Any() == true)
+        {
+            @foreach (var item in Model.MenuItems)
+            {
+                <div class="col-md-4 mb-4">
+                    <a asp-controller="Details" asp-action="FoodDetails" asp-route-id="@item.MenuItemId" class="card-link">
+                        <div class="card h-100">
+                            <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" />
+                            <div class="card-body">
+                                <h5>@item.Name</h5>
+                                <p>@item.Description</p>
+                                <p class="price">@item.Price.ToString("C")</p>
+                                <span class="badge @(item.IsAvailable ? "bg-success" : "bg-secondary")">
+                                    @(item.IsAvailable ? "Có sẵn" : "Tạm hết")
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">Không tìm thấy món ăn nào.</div>
+        }
+    </div>
+
+    <!-- Category -->
+    <h4 class="section-title mb-4">Danh mục</h4>
+    <div class="d-flex flex-wrap gap-3">
+        @if (Model.Categories?.Any() == true)
+        {
+            @foreach (var cat in Model.Categories)
+            {
+                <div class="category-card text-white d-flex align-items-center justify-content-center"
+                     style="background-image: url('/image/default.jpg');"
+                     onclick="location.href='@Url.Action("CategoryDetails", "Category", new { id = cat.CategoryId })'">
+                    <span>@cat.Name</span>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state text-center text-muted py-5 w-100">
+                Không có danh mục nào.
+            </div>
+        }
+	@* </div> lỗi danh mục *@
+
+    <style>
+        .category-card {
+            width: 160px;
+            height: 80px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .category-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+
+            .category-card span {
+                background: rgba(0,0,0,0.5);
+                padding: 4px 10px;
+                border-radius: 8px;
+            }
+    </style>
+
+
+</div>

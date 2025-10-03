@@ -1,0 +1,57 @@
+﻿@model FoodOrderWeb.Models.Combo
+@{
+    ViewData["Title"] = "Chi tiết Combo";
+    var otherCombos = ViewBag.OtherCombos as List<FoodOrderWeb.Models.Combo>;
+}
+
+<div class="container mt-4">
+    <h2>@Model.Name</h2>
+    <p class="text-muted">@Model.Description</p>
+    <h4 class="text-danger">@Model.Price.ToString("C")</h4>
+
+    <!-- Nút giỏ hàng -->
+    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex gap-2 mb-4">
+        <input type="hidden" name="id" value="@Model.ComboId" />
+        <input type="hidden" name="type" value="combo" />
+
+        <button type="submit" class="btn btn-success">
+            <i class="fa fa-cart-plus"></i> Thêm vào giỏ
+        </button>
+
+        <button type="submit" formaction="@Url.Action("BuyNow", "Cart")" class="btn btn-danger">
+            <i class="fa fa-bolt"></i> Mua ngay
+        </button>
+    </form>
+
+    <h4>Món trong combo</h4>
+    <div class="row">
+        @foreach (var ci in Model.ComboItems)
+        {
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    <img src="@ci.MenuItem.ImageUrl" class="card-img-top" alt="@ci.MenuItem.Name" />
+                    <div class="card-body text-center">
+                        <h6>@ci.MenuItem.Name</h6>
+                        <p class="text-danger">@ci.MenuItem.Price.ToString("C")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <h4 class="mt-5">Combo khác</h4>
+    <div class="row">
+        @foreach (var combo in otherCombos)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5>@combo.Name</h5>
+                        <p>@combo.Description</p>
+                        <a asp-action="ComboDetails" asp-route-id="@combo.ComboId" class="btn btn-outline-success">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

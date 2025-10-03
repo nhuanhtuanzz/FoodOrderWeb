@@ -1,0 +1,145 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FoodOrderWeb</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light border-bottom shadow-sm fixed-top custom-navbar">
+            <div class="container-xl">
+                <a class="navbar-brand fw-bold fst-italic fs-3 brand-text" asp-area="" asp-controller="Home" asp-action="Index">
+                    FatFod <i class="fa-solid fa-bowl-food"></i>
+                </a>
+                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item mx-3">
+                            <a class="nav-link text-light fw-semibold" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item mx-3">
+                            <a class="nav-link text-light fw-semibold" asp-controller="Home" asp-action="Starter">Starter</a>
+                        </li>
+                        <li class="nav-item mx-3">
+                            <a class="nav-link text-light fw-semibold" asp-controller="Home" asp-action="Main">Main</a>
+                        </li>
+                        <li class="nav-item mx-3">
+                            <a class="nav-link text-light fw-semibold" asp-controller="Home" asp-action="Dessert">Dessert</a>
+                        </li>
+                        <li class="nav-item mx-3">
+                            <a class="nav-link text-light fw-semibold" asp-controller="Home" asp-action="Drink">Drink</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item position-relative">
+                                <a href="#" id="userIcon" class="nav-link d-flex align-items-center user-link">
+                                    <i class="fa-solid fa-user fa-lg user-icon"></i>
+                                    <span class="ms-2 user-name">@User.Identity.Name</span>
+                                </a>
+
+
+                                <div id="userPanel" class="position-absolute end-0 mt-2 p-3 bg-white border rounded-3 shadow-lg user-panel">
+                                    <h6 class="mb-3 text-center fw-bold text-success">User Panel</h6>
+
+                                    <div class="mb-2">
+                                        <a class="btn btn-outline-success w-100 rounded-pill" asp-controller="Login" asp-action="Profile">
+                                            View Profile
+                                        </a>
+                                    </div>
+
+                                    <div>
+                                        <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger w-100 rounded-pill">Logout</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <form asp-controller="Login" asp-action="Index" method="get" class="d-inline">
+                                    <button type="submit" class="btn btn-light rounded-pill px-3 shadow-sm">
+                                        Login
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="flex-grow-1" style="padding-top:90px;">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="text-light mt-auto py-5 footer-custom">
+        <div class="container">
+            <div class="row text-center text-md-start">
+                <div class="col-md-4 mb-3">
+                    <h6 class="fw-bold">Tải ứng dụng</h6>
+                    <p>App Store</p>
+                    <p>Google Play</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h6 class="fw-bold">Thông tin</h6>
+                    <p>Giới thiệu</p>
+                    <p>Chính sách</p>
+                    <p>Hỗ trợ</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h6 class="fw-bold">Liên hệ</h6>
+                    <p>Email: cskh@greengo.com</p>
+                    <p>Hotline: 0123 456 789</p>
+                </div>
+            </div>
+            <hr class="border-light" />
+            <div class="text-center">
+                <small>© 2025 - FoodOrderWeb</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        const userIcon = document.getElementById('userIcon');
+        const userPanel = document.getElementById('userPanel');
+
+        if (userIcon) {
+            userIcon.addEventListener('click', function (e) {
+                e.preventDefault();
+                userPanel.style.display = (userPanel.style.display === 'block') ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!userIcon.contains(e.target) && !userPanel.contains(e.target)) {
+                    userPanel.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

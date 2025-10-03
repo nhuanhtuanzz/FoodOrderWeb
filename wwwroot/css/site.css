@@ -1,0 +1,166 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9fafb;
+    background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('/image/homeimage.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+}
+
+.user-icon, .user-name {
+    color: green !important;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.user-link:hover .user-icon,
+.user-link:hover .user-name {
+    color: #28a745; /* xanh lá týõi hõn */
+    transform: scale(1.1);
+}
+
+/* Navbar */
+.brand-text {   
+    color: #065f46 !important;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease-in-out;
+}
+
+    .brand-text:hover {
+        color: #0a5c0a !important; 
+        text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6);
+        transform: scale(1.05); 
+    }
+.custom-navbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    transition: box-shadow 0.3s ease;
+}
+
+    .custom-navbar .nav-link {
+        position: relative;
+        color: #334155 !important;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+        .custom-navbar .nav-link:hover {
+            color: #0d9488 !important;
+        }
+
+        .custom-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #0d9488;
+            transition: width 0.3s ease;
+        }
+
+        .custom-navbar .nav-link:hover::after {
+            width: 100%;
+        }
+
+/* User Panel */
+.user-panel {
+    display: none;
+    width: 220px;
+    animation: fadeDown 0.3s ease;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Buttons */
+.btn {
+    transition: all 0.3s ease-in-out;
+    border-radius: 9999px; /* pill style */
+}
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+    }
+
+/* Tabs */
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #64748b;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+    .nav-tabs .nav-link.active {
+        color: #0d9488;
+        border-bottom: 3px solid #0d9488;
+        font-weight: 600;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #0d9488;
+        border-bottom: 3px solid #0d9488;
+    }
+
+/* Tab content animation */
+.tab-content > .tab-pane {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.tab-content > .active {
+    display: block;
+    opacity: 1;
+}
+
+/* Footer */
+.footer-custom {
+    background: #0f172a;
+}
+
+    .footer-custom p,
+    .footer-custom small {
+        color: #94a3b8;
+    }
+
+    .footer-custom h6 {
+        color: #f8fafc;
+    }
+
+    .footer-custom p:hover {
+        color: #0d9488;
+        cursor: pointer;
+    }
+

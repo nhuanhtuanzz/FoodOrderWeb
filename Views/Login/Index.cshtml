@@ -1,0 +1,156 @@
+﻿@model FoodOrderWeb.Models.User
+
+<style>
+    body {
+        background: url('/image/homeimage.jpeg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 80px);
+        padding: 20px;
+    }
+
+    .loginform {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 40px 30px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+        .loginform h3 {
+            font-weight: 700;
+            color: #2e7d32; /* xanh lá đậm */
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+    .form-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: whitesmoke;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #43a047;
+            box-shadow: 0 0 8px rgba(67, 160, 71, 0.5);
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #43a047, #66bb6a);
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #388e3c, #43a047);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(56, 142, 60, 0.4);
+        }
+
+    .form-check-label {
+        font-size: 14px;
+        color: whitesmoke;
+    }
+
+        .form-check-label a {
+            color: #388e3c;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .form-check-label a:hover {
+                text-decoration: underline;
+            }
+
+    .signin {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .sign-in-btn {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #4caf50, #81c784);
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+        .sign-in-btn:hover {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 160, 71, 0.4);
+            text-decoration: none;
+        }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="loginform">
+        <h3 class="text-center"><i class="fa-solid fa-leaf"></i> Login</h3>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <!-- Login form -->
+        <form asp-action="Index" method="post">
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PasswordHash" class="form-label">Mật khẩu</label>
+                <input asp-for="PasswordHash" type="password" class="form-control" />
+                <span asp-validation-for="PasswordHash" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="policyCheck" required>
+                <label class="form-check-label" for="policyCheck">
+                    Tôi đã đọc và đồng ý với <a href="/Login/policy" target="_blank">Policy</a>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+
+        <!-- Sign up links -->
+        <div class="signin">
+            <a asp-controller="Login" asp-action="Register" class="sign-in-btn">Register</a>
+        </div>
+    </div>
+</div>

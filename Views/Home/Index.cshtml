@@ -1,0 +1,435 @@
+﻿@using System.Linq
+@model FoodOrderWeb.Models.ViewModel.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style> 
+    /* Left column */
+    .left-column {
+        padding: 25px 30px;
+        background: rgba(255, 255, 255, 0.6); /* nền trắng trong suốt 60% */
+        backdrop-filter: blur(6px); /* làm mờ background phía sau */
+        border-right: 1px solid rgba(255,255,255,0.2);
+        border-radius: 12px;
+        min-height: calc(100vh-80px);
+        margin: 0 0 20px 0;
+    }
+    /* Tagline */
+    .tagline {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.4;
+    }
+
+    /* Search bar */
+    .search-bar {
+        display: flex;
+        border: 1px solid #d1d5db;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        transition: box-shadow 0.3s ease;
+    }
+
+        .search-bar:focus-within {
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.15);
+            border-color: #0d9488;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 18px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .search-bar button {
+            background: #0d9488;
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            transition: background 0.3s;
+        }
+
+            .search-bar button:hover {
+                background: #0f766e;
+            }
+
+    /* Category box */
+    .category-box {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        padding: 20px 15px;
+        min-height: 75px; /* chỉnh lại min height */
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .category-box:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: #f0fdfa;
+            border-color: #0d9488;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+
+    /* Chữ trong category */
+    .category-name {
+        font-size: 18px; /* chữ to hơn */
+        font-weight: 700;
+        color: #0f172a;
+        text-align: center;
+        transition: transform 0.2s ease, color 0.3s ease;
+    }
+
+
+    /* right */
+    /* Voucher card */
+    .wrapper {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 10px;
+        margin: 0 0 20px 0;
+    }
+
+    .voucher-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        transition: all 0.25s ease;
+    }
+
+        .voucher-card:hover {
+            transform: translateY(-5px);
+            background: #f0fdfa;
+            border-color: #0d9488;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+
+    .voucher-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .voucher-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .voucher-desc {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0;
+    }
+
+</style>
+
+<div class="container-sm mainhome">
+    <div class="row">
+        <!-- Left -->
+        <div class="col-md-6 left-column">
+            <!-- Slogan -->
+            <div class="mb-4 text-center">
+                <h1 class="tagline">Món ngon quanh bạn, chỉ với một cú click</h1>
+            </div>
+
+            <!-- Search bar -->
+            <div class="mb-5 position-relative" style="max-width:500px; margin:auto;">
+                <form asp-controller="Home" asp-action="Search" method="get" class="search-bar">
+                    <input type="search" id="searchBox" name="query" placeholder="Tìm món ăn, đồ uống..." autocomplete="off" />
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+                <ul id="suggestions" class="list-group position-absolute mt-1 w-100"></ul>
+            </div>
+
+            <!-- Featured products -->
+            <div class="mb-4 text-center">
+                <h3 class="fw-bold text-success">🌟 Sản phẩm nổi bật 🌟</h3>
+            </div>
+
+            <div id="featuredCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Model.MenuItems.Count; i++)
+                    {
+                        var product = Model.MenuItems[i];
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <div class="row g-4 align-items-center">
+                                <!-- Ảnh bên trái -->
+                                <div class="col-md-6">
+                                    <img src="@product.ImageUrl"
+                                         class="d-block w-100 rounded shadow-sm"
+                                         style="height:320px; object-fit:cover;"
+                                         alt="@product.Name" />
+                                </div>
+
+                                <!-- Thông tin bên phải -->
+                                <div class="col-md-6 d-flex flex-column justify-content-center px-4">
+                                    <h3 class="fw-bold text-dark mb-3" style="font-size: 1.6rem;">
+                                        @product.Name
+                                    </h3>
+                                    <p class="text-secondary mb-3" style="font-size: 1rem; line-height: 1.6;">
+                                        @product.Description
+                                    </p>
+                                    <p class="text-success fw-bold mb-4" style="font-size: 1.2rem;">
+                                        @product.Price.ToString("C")
+                                    </p>
+                                    <a asp-controller="Home" asp-action="FoodDetails" asp-route-id="@product.MenuItemId"
+                                       class="btn btn-lg btn-success shadow-sm rounded-pill px-4 py-2"
+                                       style="font-weight: 600;">
+                                        <i class="fa-solid fa-cart-shopping me-2"></i> Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Controls -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-2"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-2"></span>
+                </button>
+            </div>
+
+
+        </div>
+
+
+
+        <!-- Right -->
+        <div class="col-md-6 right-column">
+            <div class="wrapper p-3 border shadow-sm">
+
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-4 custom-tabs" id="voucherTabs" role="tablist">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#combo">Combo</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#starter">Starter</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#main">Main</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#dessert">Dessert</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#drink">Drink</a></li>
+                </ul>
+
+                <!-- Voucher content -->
+                <!-- Combo -->
+                <div class="tab-pane fade show active" id="combo">
+                    @foreach (var v in Model.ComboVouchers)
+                    {
+                        <div class="voucher-card d-flex align-items-center mb-3">
+                            <img src="@(v.MenuItems.FirstOrDefault()?.ImageUrl ?? "/images/default.jpg")"
+                                 class="voucher-img" alt="@v.Code" />
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="voucher-title">@v.Code</h5>
+                                <p class="voucher-desc">@v.Description</p>
+                                <small class="text-success">
+                                    Giảm @(v.DiscountPercent?.ToString("0") ?? "0")%
+                                </small>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Starter -->
+                <div class="tab-pane fade" id="starter">
+                    @foreach (var v in Model.StarterVouchers)
+                    {
+                        <div class="voucher-card d-flex align-items-center mb-3">
+                            <img src="@(v.MenuItems.FirstOrDefault()?.ImageUrl ?? "/images/default.jpg")"
+                                 class="voucher-img" alt="@v.Code" />
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="voucher-title">@v.Code</h5>
+                                <p class="voucher-desc">@v.Description</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <!-- Main -->
+                <div class="tab-pane fade" id="main">
+                    @foreach (var v in Model.MainVouchers)
+                    {
+                        <div class="voucher-card d-flex align-items-center mb-3">
+                            <img src="@(v.MenuItems.FirstOrDefault()?.ImageUrl ?? "/images/default.jpg")"
+                                 class="voucher-img" alt="@v.Code" />
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="voucher-title">@v.Code</h5>
+                                <p class="voucher-desc">@v.Description</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <!-- Dessert -->
+                <div class="tab-pane fade" id="dessert">
+                    @foreach (var v in Model.DessertVouchers)
+                    {
+                        <div class="voucher-card d-flex align-items-center mb-3">
+                            <img src="@(v.MenuItems.FirstOrDefault()?.ImageUrl ?? "/images/default.jpg")"
+                                 class="voucher-img" alt="@v.Code" />
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="voucher-title">@v.Code</h5>
+                                <p class="voucher-desc">@v.Description</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <!-- Drinks -->
+                <div class="tab-pane fade" id="drink">
+                    @foreach (var v in Model.DrinkVouchers)
+                    {
+                        <div class="voucher-card d-flex align-items-center mb-3">
+                            <img src="@(v.MenuItems.FirstOrDefault()?.ImageUrl ?? "/images/default.jpg")"
+                                 class="voucher-img" alt="@v.Code" />
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="voucher-title">@v.Code</h5>
+                                <p class="voucher-desc">@v.Description</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const searchBox = document.getElementById("searchBox");
+        const suggestions = document.getElementById("suggestions");
+
+        searchBox.addEventListener("input", function () {
+            const term = this.value.trim();
+            if (term.length < 2) { suggestions.style.display = "none"; return; }
+
+            fetch(`/Home/SearchSuggestions?term=${encodeURIComponent(term)}`)
+                .then(r => r.json())
+                .then(data => {
+                    suggestions.innerHTML = "";
+                    if (data && data.length) {
+                        data.forEach(item => {
+                            const li = document.createElement("li");
+                            li.textContent = item;
+                            li.classList.add("list-group-item");
+                            li.style.cursor = "pointer";
+                            li.onclick = () => {
+                                searchBox.value = item;
+                                suggestions.style.display = "none";
+                                // Submit luôn nếu muốn:
+                                // searchBox.closest("form").submit();
+                            };
+                            suggestions.appendChild(li);
+                        });
+                        suggestions.style.display = "block";
+                    } else {
+                        suggestions.style.display = "none";
+                    }
+                })
+                .catch(() => suggestions.style.display = "none");
+        });
+
+        // Ẩn gợi ý khi click ra ngoài
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".position-relative")) suggestions.style.display = "none";
+        });
+
+                // Hiệu ứng "pulsing" khi hover category
+        document.querySelectorAll(".category-box").forEach(box => {
+            box.addEventListener("mouseenter", () => {
+                const text = box.querySelector(".category-name");
+                text.style.color = "#0d9488";
+                text.style.transform = "scale(1.1)";
+            });
+            box.addEventListener("mouseleave", () => {
+                const text = box.querySelector(".category-name");
+                text.style.color = "#0f172a";
+                text.style.transform = "scale(1)";
+            });
+        });
+
+        // Hiệu ứng nhấp nháy khi click
+        document.querySelectorAll(".category-box").forEach(box => {
+            box.addEventListener("click", () => {
+                box.animate(
+                    [
+                        { transform: "scale(1)" },
+                        { transform: "scale(0.95)" },
+                        { transform: "scale(1)" }
+                    ],
+                    { duration: 300 }
+                );
+            });
+        });
+
+        // Hiệu ứng di chuyển nhẹ theo chuột
+        document.querySelectorAll(".category-box").forEach(box => {
+            box.addEventListener("mousemove", (e) => {
+                const rect = box.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                box.style.transform = `translate(${x * 8}px, ${y * 8}px) scale(1.02)`;
+            });
+            box.addEventListener("mouseleave", () => {
+                box.style.transform = "translate(0,0) scale(1)";
+            });
+        });
+
+    // right
+            // Hiệu ứng hover cho voucher card
+        document.querySelectorAll(".voucher-card").forEach(card => {
+            const title = card.querySelector(".voucher-title");
+            card.addEventListener("mouseenter", () => {
+                title.style.color = "#0d9488";
+                title.style.transform = "scale(1.05)";
+            });
+            card.addEventListener("mouseleave", () => {
+                title.style.color = "#0f172a";
+                title.style.transform = "scale(1)";
+            });
+        });
+
+        // Hiệu ứng click nhún xuống
+        document.querySelectorAll(".voucher-card").forEach(card => {
+            card.addEventListener("click", () => {
+                card.animate(
+                    [
+                        { transform: "scale(1)" },
+                        { transform: "scale(0.95)" },
+                        { transform: "scale(1)" }
+                    ],
+                    { duration: 300 }
+                );
+            });
+        });
+
+        // Hiệu ứng parallax theo chuột
+        document.querySelectorAll(".voucher-card").forEach(card => {
+            card.addEventListener("mousemove", (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform = `translate(${x * 6}px, ${y * 6}px) scale(1.02)`;
+            });
+            card.addEventListener("mouseleave", () => {
+                card.style.transform = "translate(0,0) scale(1)";
+            });
+        });
+
+    </script>
+
+}
