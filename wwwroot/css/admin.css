@@ -1,0 +1,28 @@
+﻿.sidebar {
+    background-color: #212529 !important; 
+    color: #fff;
+}
+
+    .sidebar .nav-link {
+        transition: all 0.2s ease-in-out;
+    }
+
+        .sidebar .nav-link:hover {
+            background-color: #198754; 
+            border-radius: 8px;
+        }
+
+
+header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #198754;
+}
+
+footer {
+    background-color: #212529;
+    color: #adb5bd;
+}
+
+.card {
+    border-radius: 12px;
+}

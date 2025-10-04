@@ -1,22 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FoodOrderWeb.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
-using FoodOrderWeb.Models;
 
 namespace FoodOrderWeb.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly FoodorderwebContext _context = new FoodorderwebContext();
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly FoodorderwebContext _context;
 
-        public LoginController(SignInManager<IdentityUser> signInManager, FoodorderwebContext context)
+        public LoginController(FoodorderwebContext context)
         {
-            _signInManager = signInManager;
             _context = context;
         }
 
@@ -27,42 +24,51 @@ namespace FoodOrderWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string Email, string Passwordhash)
+        public async Task<IActionResult> Index(string Email, string PasswordHash)
         {
             var user = _context.Users
                 .Include(u => u.Address)
                 .FirstOrDefault(u => u.Email == Email && u.IsActive);
+
             if (user != null)
             {
                 var passwordHasher = new PasswordHasher<User>();
-                var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, Passwordhash);
+                var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, PasswordHash);
+
                 if (verificationResult == PasswordVerificationResult.Success)
                 {
                     var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.FullName),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Role, user.Role),
-                        new Claim("UserId", user.UserId.ToString())
-                    };
-                    var claimsIdentity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
+            {
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim("UserId", user.UserId.ToString())
+            };
+
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims,
+                        CookieAuthenticationDefaults.AuthenticationScheme
+                    );
+
                     var authProperties = new AuthenticationProperties
                     {
                         IsPersistent = true,
                         ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1)
                     };
-                    HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,
-                        new ClaimsPrincipal(claimsIdentity), authProperties).Wait();
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties
+                    );
+
                     if (user.Role == "Admin")
-                    {
                         return RedirectToAction("Index", "AdminDashboard");
-                    }
                     else
-                    {
                         return RedirectToAction("Index", "Home");
-                    }
                 }
             }
+
             ViewBag.ErrorMessage = "Invalid email or password.";
             return View();
         }
@@ -74,45 +80,37 @@ namespace FoodOrderWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string FullName, string Email, string PasswordHash, string Phone)
+        public IActionResult Register(string FullName, string Email, string Password, string Phone)
         {
             if (_context.Users.Any(u => u.Email == Email))
             {
                 ViewBag.ErrorMessage = "Email already exists.";
                 return View();
             }
+
             var passwordHasher = new PasswordHasher<User>();
             var user = new User
             {
                 FullName = FullName,
                 Email = Email,
-                PasswordHash = passwordHasher.HashPassword(null, PasswordHash),
+                PasswordHash = passwordHasher.HashPassword(null, Password),
                 Phone = Phone,
                 Role = "Customer",
                 IsActive = true,
                 CreatedAt = DateTime.Now
             };
+
             _context.Users.Add(user);
             _context.SaveChanges();
-            //var address = new Address
-            //{
-            //    UserId = user.UserId,
-            //    Street = street,
-            //    City = city,
-            //    State = state,
-            //    ZipCode = zipCode
-            //};
-            //_context.Addresses.Add(address);
-            //_context.SaveChanges();
+
             return RedirectToAction("Index", "Login");
         }
 
         [HttpPost]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme).Wait();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
-
     }
 }

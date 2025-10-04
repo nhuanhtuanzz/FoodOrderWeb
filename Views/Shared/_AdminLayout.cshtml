@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims;
+@{
+    Layout = null;
+    var title = ViewData["Title"] ?? "Admin Dashboard";
+
+    var displayName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value
+                      ?? User.Identity?.Name
+                      ?? "Admin";
+
+    // active page
+    string activePage = ViewData["ActivePage"]?.ToString() ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@title - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body class="d-flex">
+    <!-- Sidebar -->
+    <nav class="bg-dark text-light p-3 sidebar vh-100 shadow-sm" style="width:250px;">
+        <div class="text-center mb-4">
+            <a class="navbar-brand fw-bold fst-italic fs-4 text-success text-decoration-none" asp-controller="AdminDashboard" asp-action="Index">
+                <i class="fa-solid fa-bowl-food me-2"></i> FatFod Admin
+            </a>
+        </div>
+
+        <div class="d-flex flex-column align-items-center mb-4">
+            <i class="fa-solid fa-circle-user fa-4x mb-2 text-secondary"></i>
+            <span class="fw-semibold">@displayName</span>
+            <small class="text-muted">Administrator</small>
+        </div>
+
+        <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Dashboard" ? "bg-success rounded" : "")"
+                   asp-controller="AdminDashboard" asp-action="Index">
+                    <i class="fa-solid fa-chart-line me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Users" ? "bg-success rounded" : "")"
+                   asp-controller="AdminDashboard" asp-action="Users">
+                    <i class="fa-solid fa-users me-2"></i> Users
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Orders" ? "bg-success rounded" : "")"
+                   asp-controller="Orders" asp-action="Index">
+                    <i class="fa-solid fa-receipt me-2"></i> Orders
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Products" ? "bg-success rounded" : "")"
+                   asp-controller="Products" asp-action="Index">
+                    <i class="fa-solid fa-box-open me-2"></i> Products
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main content -->
+    <div class="flex-grow-1 d-flex flex-column">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom shadow-sm bg-white">
+            <!-- Left: Page Title -->
+            <h5 class="mb-0 fw-bold">@title</h5>
+
+            <!-- Right: Notifications + User Dropdown -->
+            <div class="d-flex align-items-center">
+                <!-- Notification bell -->
+                <a href="#" class="btn btn-link position-relative me-3">
+                    <i class="fa-solid fa-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        3
+                    </span>
+                </a>
+
+                <!-- User dropdown -->
+                <div class="dropdown">
+                    <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-circle-user fs-4 me-2"></i>
+                        <strong>@displayName</strong>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index"><i class="fa-solid fa-user me-2"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li>
+                            <form asp-controller="Login" asp-action="Logout" method="post">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <main class="p-4 flex-grow-1">
+            @RenderBody()
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-light text-center py-3 mt-auto shadow-sm">
+            <small>© 2025 - FatFod Admin Dashboard</small>
+        </footer>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

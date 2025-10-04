@@ -1,0 +1,83 @@
+﻿@model FoodOrderWeb.Models.ViewModel.AdminViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-success">Admin Dashboard</h2>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+			<a asp-controller="AdminDashboard" asp-action="Users" class="text-decoration-none">
+                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fa-solid fa-users fa-2x mb-2 text-success"></i>
+                        <h5 class="fw-bold text-dark">Users</h5>
+                        <h3 class="fw-bold text-success">@(Model.TotalUsers ?? 0)</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a asp-controller="Orders" asp-action="Index" class="text-decoration-none">
+                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fa-solid fa-receipt fa-2x mb-2 text-success"></i>
+                        <h5 class="fw-bold text-dark">Orders</h5>
+                        <h3 class="fw-bold text-success">@(Model.TotalOrders ?? 0)</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a asp-controller="Products" asp-action="Index" class="text-decoration-none">
+                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fa-solid fa-box-open fa-2x mb-2 text-success"></i>
+                        <h5 class="fw-bold text-dark">Products</h5>
+                        <h3 class="fw-bold text-success">@(Model.TotalProducts ?? 0)</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a asp-controller="Categories" asp-action="Index" class="text-decoration-none">
+                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fa-solid fa-layer-group fa-2x mb-2 text-success"></i>
+                        <h5 class="fw-bold text-dark">Categories</h5>
+                        <h3 class="fw-bold text-success">@(Model.TotalCategories ?? 0)</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <div class="card text-center shadow-sm dashboard-card border-0">
+            <div class="card-body">
+                <i class="fa-solid fa-dollar-sign fa-2x mb-2 text-success"></i>
+                <h5 class="fw-bold text-dark">Total Revenue</h5>
+                <h3 class="fw-bold text-success">$@(Model.TotalRevenue ?? 0)</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hover effect -->
+<style>
+    .dashboard-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+        }
+</style>
