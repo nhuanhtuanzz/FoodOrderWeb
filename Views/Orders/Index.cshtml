@@ -1,0 +1,104 @@
+﻿@model IEnumerable<FoodOrderWeb.Models.Order>
+@{
+    ViewData["Title"] = "Orders Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <span class="fw-bold fs-5">
+                <i class="fa-solid fa-receipt me-2"></i> Quản lý đơn hàng
+            </span>
+
+            <a asp-action="History" class="btn btn-light btn-sm">
+                <i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch sử
+            </a>
+        </div>
+
+        <div class="card-body">
+            <!-- Search -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <form asp-action="Index" method="get" class="d-flex align-items-center" style="max-width: 520px;">
+                    <input type="text" name="searchString"
+                           class="form-control me-2"
+                           style="height: 40px; font-size: 15px;"
+                           placeholder="Tìm kiếm theo tên người dùng hoặc trạng thái"
+                           value="@Context.Request.Query["searchString"]" />
+                    <button type="submit" class="btn btn-primary px-4" style="height: 40px;">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Orders -->
+            @if (!Model.Any())
+            {
+                <div class="text-center text-muted py-4">
+                    <i class="fa fa-info-circle me-1"></i> Không có đơn hàng nào.
+                </div>
+            }
+            else
+            {
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                    @foreach (var order in Model)
+                    {
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm rounded-3">
+                                <div class="card-body">
+                                    <h6 class="card-title fw-bold mb-2">
+                                        <i class="fa-solid fa-barcode me-1"></i> Đơn #@order.OrderId
+                                    </h6>
+
+                                    <p class="mb-1 text-muted small">
+                                        <i class="fa-regular fa-clock me-1"></i>
+                                        @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                                    </p>
+
+                                    <p class="fw-semibold
+                                        @(order.OrderStatus?.Name == "Completed" ? "text-success" :
+                                          order.OrderStatus?.Name == "Cancelled" ? "text-danger" : "text-warning") mb-1">
+                                        @order.OrderStatus?.Name
+                                    </p>
+
+                                    <p class="mb-1">
+                                        <i class="fa-solid fa-user me-1 text-secondary"></i>
+                                        @order.User?.FullName
+                                    </p>
+
+                                    <p class="fw-bold text-success mb-0">
+                                        @order.TotalAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                    </p>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="card-footer bg-white border-0 d-flex justify-content-center gap-2 py-2">
+                                    <a asp-action="Detail" asp-route-id="@order.OrderId"
+                                       class="btn btn-sm btn-primary px-3">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+
+                                    <form asp-action="MarkAsCompleted" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@order.OrderId" />
+                                        <button type="submit" class="btn btn-sm btn-success px-3"
+                                                onclick="return confirm('Xác nhận hoàn thành đơn này?');">
+                                            Hoàn thành
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="Delete" asp-route-id="@order.OrderId" method="post"
+                                          onsubmit="return confirm('Xóa đơn hàng này?');" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger px-3">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

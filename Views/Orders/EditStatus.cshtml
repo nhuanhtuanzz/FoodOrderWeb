@@ -1,0 +1,47 @@
+﻿@model FoodOrderWeb.Models.Order
+
+@{
+    ViewData["Title"] = "Chỉnh sửa trạng thái";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-warning text-dark fw-bold">
+            <i class="fa fa-edit me-2"></i> Cập nhật trạng thái đơn hàng #@Model.OrderId
+        </div>
+
+        <div class="card-body">
+            <form asp-action="EditStatus" method="post">
+                <input type="hidden" name="id" value="@Model.OrderId" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Khách hàng:</label>
+                    <p>@Model.User?.FullName</p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="OrderStatusId" class="form-label fw-bold">Trạng thái</label>
+                    <select name="OrderStatusId" id="OrderStatusId" class="form-select">
+                        @foreach (var status in (IEnumerable<FoodOrderWeb.Models.OrderStatus>)ViewBag.StatusList)
+                        {
+                            <option value="@status.OrderStatusId"
+                                    selected="@(status.OrderStatusId == Model.OrderStatusId)">
+                                @status.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-save"></i> Cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

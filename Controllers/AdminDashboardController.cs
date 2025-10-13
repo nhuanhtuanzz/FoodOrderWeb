@@ -16,27 +16,38 @@ namespace FoodOrderWeb.Controllers
             _context = context;
         }
 
-        // ===== DASHBOARD =====
+        // ================== DASHBOARD ==================
         public IActionResult Index()
         {
             var viewModel = new AdminViewModel
             {
                 TotalUsers = _context.Users.Count(),
                 TotalOrders = _context.Orders.Count(),
+
                 TotalRevenue = _context.Orders
                     .Include(o => o.OrderStatus)
                     .Where(o => o.OrderStatus.Name == "Completed")
-                    .Sum(o => o.TotalAmount),
+                    .Sum(o => (decimal?)o.TotalAmount) ?? 0,
+
                 TotalProducts = _context.MenuItems.Count(),
-                TotalCategories = _context.Categories.Count()
+                TotalCategories = _context.Categories.Count(),
+                TotalVouchers = _context.Vouchers.Count(),
+                TotalCombos = _context.ComboItems
+                                .Select(c => c.ComboId)
+                                .Distinct()
+                                .Count(),
+                TotalSizes = _context.MenuItemSizes
+                                .Select(s => s.SizeName)
+                                .Distinct()
+                                .Count()
+
             };
 
+            ViewData["ActivePage"] = "Dashboard";
             return View(viewModel);
         }
 
-        // ===== USERS CRUD =====
-
-        // READ + SEARCH
+        // ================== USERS CRUD ==================
         public async Task<IActionResult> Users(string? searchString)
         {
             var users = from u in _context.Users select u;
@@ -53,7 +64,6 @@ namespace FoodOrderWeb.Controllers
             return View("~/Views/Users/Index.cshtml", await users.ToListAsync());
         }
 
-        // ===== CREATE =====
         [HttpGet]
         public IActionResult CreateUser()
         {
@@ -85,7 +95,6 @@ namespace FoodOrderWeb.Controllers
             return View("~/Views/Users/Create.cshtml", user);
         }
 
-        // ===== EDIT =====
         [HttpGet]
         public IActionResult EditUser(int id)
         {
@@ -113,7 +122,6 @@ namespace FoodOrderWeb.Controllers
                 var user = _context.Users.Find(vm.UserId);
                 if (user == null) return NotFound();
 
-                // Cập nhật từng thuộc tính
                 user.FullName = vm.FullName;
                 user.Email = vm.Email;
                 user.Phone = vm.Phone;
@@ -127,9 +135,6 @@ namespace FoodOrderWeb.Controllers
             return View("~/Views/Users/Edit.cshtml", vm);
         }
 
-
-
-        // ===== DELETE =====
         [HttpGet]
         public IActionResult DeleteUser(int id)
         {
@@ -152,6 +157,165 @@ namespace FoodOrderWeb.Controllers
             }
 
             return RedirectToAction(nameof(Users));
+        }
+
+        // ================== PRODUCTS CRUD ==================
+
+        // READ + SEARCH
+        public async Task<IActionResult> Products(string? search)
+        {
+            var products = from p in _context.MenuItems.Include(p => p.Category)
+                           select p;
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                products = products.Where(p =>
+                    p.Name.Contains(search)
+                );
+            }
+
+            return View("~/Views/Products/Index.cshtml", await products.ToListAsync());
+        }
+
+        // CREATE
+        [HttpGet]
+        public IActionResult CreateProduct()
+        {
+            ViewBag.Categories = _context.Categories.ToList();
+            return View("~/Views/Products/Create.cshtml");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateProduct(MenuItem product, IFormFile? imageFile)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Xử lý upload ảnh
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products");
+                        if (!Directory.Exists(uploadDir))
+                            Directory.CreateDirectory(uploadDir);
+
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                        var filePath = Path.Combine(uploadDir, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            imageFile.CopyTo(stream);
+                        }
+
+                        product.ImageUrl = "/images/products/" + fileName;
+                    }
+
+                    product.CreatedAt = DateTime.Now;
+                    _context.MenuItems.Add(product);
+                    _context.SaveChanges();
+
+                    TempData["SuccessMessage"] = "Thêm sản phẩm thành công!";
+                    return RedirectToAction(nameof(Products));
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi khi thêm sản phẩm: " + ex.Message);
+            }
+
+            ViewBag.Categories = _context.Categories.ToList();
+            return View("~/Views/Products/Create.cshtml", product);
+        }
+
+        // EDIT
+        [HttpGet]
+        public IActionResult EditProduct(int id)
+        {
+            var product = _context.MenuItems.Find(id);
+            if (product == null) return NotFound();
+
+            ViewBag.Categories = _context.Categories.ToList();
+            return View("~/Views/Products/Edit.cshtml", product);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditProduct(int id, MenuItem product, IFormFile? imageFile)
+        {
+            if (id != product.MenuItemId)
+                return NotFound();
+
+            var existingProduct = _context.MenuItems.AsNoTracking().FirstOrDefault(p => p.MenuItemId == id);
+            if (existingProduct == null)
+                return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Nếu upload ảnh mới → ghi đè ảnh cũ
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products");
+                        if (!Directory.Exists(uploadDir))
+                            Directory.CreateDirectory(uploadDir);
+
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                        var filePath = Path.Combine(uploadDir, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            imageFile.CopyTo(stream);
+                        }
+
+                        product.ImageUrl = "/images/products/" + fileName;
+                    }
+                    else
+                    {
+                        // Nếu không chọn ảnh mới → giữ lại ảnh cũ
+                        product.ImageUrl = existingProduct.ImageUrl;
+                    }
+
+                    _context.Update(product);
+                    _context.SaveChanges();
+
+                    TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công!";
+                    return RedirectToAction(nameof(Products));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
+                }
+            }
+
+            ViewBag.Categories = _context.Categories.ToList();
+            return View("~/Views/Products/Edit.cshtml", product);
+        }
+
+        // DELETE
+        [HttpGet]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _context.MenuItems.Find(id);
+            if (product == null)
+                return NotFound();
+
+            return View("~/Views/Products/Delete.cshtml", product);
+        }
+
+        [HttpPost, ActionName("DeleteProduct")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteProductConfirmed(int id)
+        {
+            var product = _context.MenuItems.Find(id);
+            if (product != null)
+            {
+                _context.MenuItems.Remove(product);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Products));
         }
     }
 }

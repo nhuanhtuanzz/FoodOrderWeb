@@ -10,8 +10,9 @@
     </div>
 
     <div class="row g-4">
+        <!-- Users -->
         <div class="col-md-3">
-			<a asp-controller="AdminDashboard" asp-action="Users" class="text-decoration-none">
+            <a asp-controller="AdminDashboard" asp-action="Users" class="text-decoration-none">
                 <div class="card text-center shadow-sm dashboard-card h-100 border-0">
                     <div class="card-body">
                         <i class="fa-solid fa-users fa-2x mb-2 text-success"></i>
@@ -22,6 +23,7 @@
             </a>
         </div>
 
+        <!-- Orders -->
         <div class="col-md-3">
             <a asp-controller="Orders" asp-action="Index" class="text-decoration-none">
                 <div class="card text-center shadow-sm dashboard-card h-100 border-0">
@@ -34,8 +36,9 @@
             </a>
         </div>
 
+        <!-- Products -->
         <div class="col-md-3">
-            <a asp-controller="Products" asp-action="Index" class="text-decoration-none">
+            <a asp-controller="AdminDashboard" asp-action="Products" class="text-decoration-none">
                 <div class="card text-center shadow-sm dashboard-card h-100 border-0">
                     <div class="card-body">
                         <i class="fa-solid fa-box-open fa-2x mb-2 text-success"></i>
@@ -46,6 +49,7 @@
             </a>
         </div>
 
+        <!-- Categories -->
         <div class="col-md-3">
             <a asp-controller="Categories" asp-action="Index" class="text-decoration-none">
                 <div class="card text-center shadow-sm dashboard-card h-100 border-0">
@@ -57,15 +61,44 @@
                 </div>
             </a>
         </div>
-    </div>
 
-    <div class="mt-4">
-        <div class="card text-center shadow-sm dashboard-card border-0">
-            <div class="card-body">
-                <i class="fa-solid fa-dollar-sign fa-2x mb-2 text-success"></i>
-                <h5 class="fw-bold text-dark">Total Revenue</h5>
-                <h3 class="fw-bold text-success">$@(Model.TotalRevenue ?? 0)</h3>
-            </div>
+        <!-- Vouchers -->
+        <div class="col-md-3">
+            <a asp-controller="Vouchers" asp-action="Index" class="text-decoration-none">
+                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fa-solid fa-ticket fa-2x mb-2 text-success"></i>
+                        <h5 class="fw-bold text-dark">Vouchers</h5>
+                        <h3 class="fw-bold text-success">@(Model.TotalVouchers ?? 0)</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Combos -->
+        <div class="col-md-3">
+            <a asp-controller="Combos" asp-action="Index" class="text-decoration-none">
+                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fa-solid fa-burger fa-2x mb-2 text-success"></i>
+                        <h5 class="fw-bold text-dark">Combos</h5>
+                        <h3 class="fw-bold text-success">@(Model.TotalCombos ?? 0)</h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Sizes -->
+        <div class="col-md-3">
+            <a asp-controller="Sizes" asp-action="Index" class="text-decoration-none">
+                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fa-solid fa-ruler fa-2x mb-2 text-success"></i>
+                        <h5 class="fw-bold text-dark">Sizes</h5>
+                        <h3 class="fw-bold text-success">@(Model.TotalSizes ?? 0)</h3>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </div>

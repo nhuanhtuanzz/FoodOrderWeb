@@ -80,7 +80,7 @@ namespace FoodOrderWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string FullName, string Email, string Password, string Phone)
+        public IActionResult Register(string FullName, string Email, string PasswordHash, string Phone)
         {
             if (_context.Users.Any(u => u.Email == Email))
             {
@@ -93,7 +93,7 @@ namespace FoodOrderWeb.Controllers
             {
                 FullName = FullName,
                 Email = Email,
-                PasswordHash = passwordHasher.HashPassword(null, Password),
+                PasswordHash = passwordHasher.HashPassword(null, PasswordHash),
                 Phone = Phone,
                 Role = "Customer",
                 IsActive = true,

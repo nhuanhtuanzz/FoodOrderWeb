@@ -34,7 +34,7 @@
         <div class="d-flex flex-column align-items-center mb-4">
             <i class="fa-solid fa-circle-user fa-4x mb-2 text-secondary"></i>
             <span class="fw-semibold">@displayName</span>
-            <small class="text-muted">Administrator</small>
+            <small class="text-muted">Admin</small>
         </div>
 
         <ul class="nav flex-column">
@@ -44,22 +44,53 @@
                     <i class="fa-solid fa-chart-line me-2"></i> Dashboard
                 </a>
             </li>
+
             <li class="nav-item mb-2">
                 <a class="nav-link text-light fw-semibold @(activePage=="Users" ? "bg-success rounded" : "")"
                    asp-controller="AdminDashboard" asp-action="Users">
                     <i class="fa-solid fa-users me-2"></i> Users
                 </a>
             </li>
+
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Products" ? "bg-success rounded" : "")"
+                   asp-controller="AdminDashboard" asp-action="Products">
+                    <i class="fa-solid fa-box-open me-2"></i> Products
+                </a>
+            </li>
+
             <li class="nav-item mb-2">
                 <a class="nav-link text-light fw-semibold @(activePage=="Orders" ? "bg-success rounded" : "")"
                    asp-controller="Orders" asp-action="Index">
                     <i class="fa-solid fa-receipt me-2"></i> Orders
                 </a>
             </li>
+
             <li class="nav-item mb-2">
-                <a class="nav-link text-light fw-semibold @(activePage=="Products" ? "bg-success rounded" : "")"
-                   asp-controller="Products" asp-action="Index">
-                    <i class="fa-solid fa-box-open me-2"></i> Products
+                <a class="nav-link text-light fw-semibold @(activePage=="Categories" ? "bg-success rounded" : "")"
+                   asp-controller="Categories" asp-action="Index">
+                    <i class="fa-solid fa-layer-group me-2"></i> Categories
+                </a>
+            </li>
+
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Vouchers" ? "bg-success rounded" : "")"
+                   asp-controller="AdminDashboard" asp-action="Vouchers">
+                    <i class="fa-solid fa-ticket me-2"></i> Vouchers
+                </a>
+            </li>
+
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Combos" ? "bg-success rounded" : "")"
+                   asp-controller="AdminDashboard" asp-action="Combos">
+                    <i class="fa-solid fa-burger me-2"></i> Combos
+                </a>
+            </li>
+
+            <li class="nav-item mb-2">
+                <a class="nav-link text-light fw-semibold @(activePage=="Sizes" ? "bg-success rounded" : "")"
+                   asp-controller="AdminDashboard" asp-action="Sizes">
+                    <i class="fa-solid fa-ruler me-2"></i> Sizes
                 </a>
             </li>
         </ul>
@@ -69,12 +100,9 @@
     <div class="flex-grow-1 d-flex flex-column">
         <!-- Header -->
         <header class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom shadow-sm bg-white">
-            <!-- Left: Page Title -->
             <h5 class="mb-0 fw-bold">@title</h5>
 
-            <!-- Right: Notifications + User Dropdown -->
             <div class="d-flex align-items-center">
-                <!-- Notification bell -->
                 <a href="#" class="btn btn-link position-relative me-3">
                     <i class="fa-solid fa-bell fs-5"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -82,7 +110,6 @@
                     </span>
                 </a>
 
-                <!-- User dropdown -->
                 <div class="dropdown">
                     <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         <i class="fa-solid fa-circle-user fs-4 me-2"></i>
@@ -103,12 +130,10 @@
             </div>
         </header>
 
-        <!-- Body -->
         <main class="p-4 flex-grow-1">
             @RenderBody()
         </main>
 
-        <!-- Footer -->
         <footer class="bg-dark text-light text-center py-3 mt-auto shadow-sm">
             <small>© 2025 - FatFod Admin Dashboard</small>
         </footer>
