@@ -87,23 +87,8 @@
                 </div>
             </a>
         </div>
-
-        <!-- Sizes -->
-        <div class="col-md-3">
-            <a asp-controller="Sizes" asp-action="Index" class="text-decoration-none">
-                <div class="card text-center shadow-sm dashboard-card h-100 border-0">
-                    <div class="card-body">
-                        <i class="fa-solid fa-ruler fa-2x mb-2 text-success"></i>
-                        <h5 class="fw-bold text-dark">Sizes</h5>
-                        <h3 class="fw-bold text-success">@(Model.TotalSizes ?? 0)</h3>
-                    </div>
-                </div>
-            </a>
-        </div>
     </div>
 </div>
-
-<!-- Hover effect -->
 <style>
     .dashboard-card {
         transition: transform 0.2s ease, box-shadow 0.2s ease;

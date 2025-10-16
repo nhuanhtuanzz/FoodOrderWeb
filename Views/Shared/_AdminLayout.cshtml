@@ -24,7 +24,7 @@
 </head>
 <body class="d-flex">
     <!-- Sidebar -->
-    <nav class="bg-dark text-light p-3 sidebar vh-100 shadow-sm" style="width:250px;">
+    <nav class="bg-dark text-light p-3 sidebar vh-100 shadow-sm" style="width:250px; height:100vh;">
         <div class="text-center mb-4">
             <a class="navbar-brand fw-bold fst-italic fs-4 text-success text-decoration-none" asp-controller="AdminDashboard" asp-action="Index">
                 <i class="fa-solid fa-bowl-food me-2"></i> FatFod Admin
@@ -75,22 +75,15 @@
 
             <li class="nav-item mb-2">
                 <a class="nav-link text-light fw-semibold @(activePage=="Vouchers" ? "bg-success rounded" : "")"
-                   asp-controller="AdminDashboard" asp-action="Vouchers">
+                   asp-controller="Vouchers" asp-action="Index" >
                     <i class="fa-solid fa-ticket me-2"></i> Vouchers
                 </a>
             </li>
 
             <li class="nav-item mb-2">
                 <a class="nav-link text-light fw-semibold @(activePage=="Combos" ? "bg-success rounded" : "")"
-                   asp-controller="AdminDashboard" asp-action="Combos">
+                   asp-controller="Combos" asp-action="Index">
                     <i class="fa-solid fa-burger me-2"></i> Combos
-                </a>
-            </li>
-
-            <li class="nav-item mb-2">
-                <a class="nav-link text-light fw-semibold @(activePage=="Sizes" ? "bg-success rounded" : "")"
-                   asp-controller="AdminDashboard" asp-action="Sizes">
-                    <i class="fa-solid fa-ruler me-2"></i> Sizes
                 </a>
             </li>
         </ul>

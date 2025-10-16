@@ -1,0 +1,71 @@
+﻿@model FoodOrderWeb.Models.MenuItem
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fa fa-pen-to-square me-2"></i> Chỉnh sửa sản phẩm</h5>
+        </div>
+
+        <div class="card-body">
+            <form asp-action="EditProduct" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="MenuItemId" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Tên sản phẩm</label>
+                    <input asp-for="Name" class="form-control" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Giá (VNĐ)</label>
+                    <input asp-for="Price" type="number" class="form-control" step="1000" required />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Danh mục</label>
+                    <select asp-for="CategoryId" class="form-select">
+                        <option value="">-- Chọn danh mục --</option>
+                        @foreach (var cat in ViewBag.Categories)
+                        {
+                            <option value="@cat.CategoryId" selected="@(cat.CategoryId == Model.CategoryId)">
+                                @cat.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Trạng thái</label>
+                    <select asp-for="IsAvailable" class="form-select">
+                        <option value="true">Còn hàng</option>
+                        <option value="false">Hết hàng</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Ảnh sản phẩm</label><br />
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="Ảnh sản phẩm" width="100" class="rounded mb-2 border" />
+                    }
+                    <input type="file" name="imageFile" class="form-control" />
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Products" class="btn btn-secondary px-4">Quay lại</a>
+                    <button type="submit" class="btn btn-success px-4">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

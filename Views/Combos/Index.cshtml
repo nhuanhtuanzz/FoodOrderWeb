@@ -1,0 +1,84 @@
+﻿@model IEnumerable<FoodOrderWeb.Models.Combo>
+
+@{
+    ViewData["Title"] = "Quản lý Combo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">
+                <i class="fa-solid fa-layer-group me-2"></i> Quản lý Combo
+            </h5>
+        </div>
+
+        <div class="card-body">
+            <!-- Search -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <form asp-action="Index" method="get" class="d-flex align-items-center" style="max-width: 480px;">
+                    <input type="text" name="search" value="@Context.Request.Query["search"]"
+                           class="form-control me-2" placeholder="Tìm kiếm theo tên hoặc mã combo..."
+                           style="height: 40px;" />
+                    <button type="submit" class="btn btn-success px-4" style="height: 40px;">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+                <a asp-action="Create" class="btn btn-success px-4 d-flex align-items-center justify-content-center" style="height: 40px;">
+                    <i class="fa fa-plus me-2"></i> Create
+                </a>
+            </div>
+
+            <!-- List -->
+            @if (!Model.Any())
+            {
+                <div class="text-center text-muted py-4">
+                    <i class="fa fa-info-circle me-1"></i> Không có combo nào.
+                </div>
+            }
+            else
+            {
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                    @foreach (var combo in Model)
+                    {
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm rounded-3">
+                                <div class="card-body">
+                                    <h6 class="fw-bold text-success mb-2">
+                                        <i class="fa fa-tags me-1"></i> @combo.Name
+                                    </h6>
+                                    <p class="text-muted mb-1 small">Mã: @combo.Code</p>
+                                    <p class="text-truncate small">@combo.Description</p>
+                                    <p class="fw-bold text-success">
+                                        @combo.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                    </p>
+
+                                    <p class="small mb-0 @(combo.IsAvailable ? "text-success" : "text-danger")">
+                                        <i class="fa @(combo.IsAvailable ? "fa-check-circle" : "fa-times-circle") me-1"></i>
+                                        @(combo.IsAvailable ? "Đang bán" : "Ngừng bán")
+                                    </p>
+                                </div>
+
+                                <div class="card-footer bg-white border-0 d-flex justify-content-center gap-2 py-2">
+                                    <a asp-action="Edit" asp-route-id="@combo.ComboId" class="btn btn-sm btn-outline-success px-3">
+                                        <i class="fa fa-pen"></i>
+                                    </a>
+
+                                    <a asp-action="Details" asp-route-id="@combo.ComboId" class="btn btn-sm btn-primary px-3">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Delete" asp-route-id="@combo.ComboId"
+                                       class="btn btn-sm btn-outline-danger px-3"
+                                       onclick="return confirm('Bạn có chắc muốn xóa combo này?');">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

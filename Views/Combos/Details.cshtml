@@ -1,0 +1,66 @@
+﻿@model FoodOrderWeb.Models.Combo
+@{
+    ViewData["Title"] = "Chi tiết Combo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <!-- Header -->
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <span class="fw-bold fs-5">
+                <i class="fa-solid fa-circle-info me-2"></i> Chi tiết Combo
+            </span>
+            <a asp-action="Index" class="btn btn-light btn-sm">
+                <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body px-4 py-4">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 text-muted">Mã Combo</dt>
+                <dd class="col-sm-9 fw-semibold">@Model.Code</dd>
+
+                <dt class="col-sm-3 text-muted">Tên Combo</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3 text-muted">Mô tả</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+
+                <dt class="col-sm-3 text-muted">Giá</dt>
+                <dd class="col-sm-9 fw-semibold text-success">
+                    @Model.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                </dd>
+
+                <dt class="col-sm-3 text-muted">Trạng thái</dt>
+                <dd class="col-sm-9">
+                    @if (Model.IsAvailable)
+                    {
+                        <span class="badge bg-success">Đang bán</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Ngừng bán</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3 text-muted">Ngày tạo</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+            </dl>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer bg-white border-0 d-flex justify-content-end">
+            <a asp-action="Edit" asp-route-id="@Model.ComboId" class="btn btn-success me-2 px-4">
+                <i class="fa-solid fa-pen-to-square me-1"></i> Sửa
+            </a>
+            <form asp-action="Delete" asp-route-id="@Model.ComboId" method="post"
+                  onsubmit="return confirm('Xóa combo này?');">
+                <button type="submit" class="btn btn-outline-danger px-4">
+                    <i class="fa-solid fa-trash"></i> Xóa
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

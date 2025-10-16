@@ -1,5 +1,100 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FoodOrderWeb.Models.Order
+@using FoodOrderWeb.Models
+@inject FoodorderwebContext _context
+
 @{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var statuses = _context.OrderStatuses.ToList();
 }
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">Chi tiết đơn hàng #@Model.OrderId</h3>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fa fa-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <div class="card p-3 mb-3">
+        <div class="d-flex align-items-center mb-2">
+            <strong class="me-2">Khách hàng:</strong>
+            <span>@Model.User?.FullName</span>
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+            <strong class="me-2">Ngày đặt:</strong>
+            <span>@Model.OrderDate.ToString("dd/MM/yyyy")</span>
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+            <strong class="me-2">Trạng thái:</strong>
+
+            <span id="status-display" class="fw-semibold text-dark me-3">
+                @Model.OrderStatus?.Name
+            </span>
+
+            <button id="edit-status-btn" type="button" class="btn btn-sm btn-outline-primary">
+                <i class="fa fa-edit me-1"></i>Thay đổi
+            </button>
+
+            <form id="status-form" asp-action="UpdateStatus" method="post"
+                  class="d-flex align-items-center ms-3 d-none">
+                <input type="hidden" name="id" value="@Model.OrderId" />
+                <select name="statusId" class="form-select form-select-sm me-2" style="width: 160px;">
+                    @foreach (var s in _context.OrderStatuses)
+                    {
+                        <option value="@s.OrderStatusId" selected="@(s.OrderStatusId == Model.OrderStatusId)">
+                            @s.Name
+                        </option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-sm btn-success me-1">Lưu</button>
+                <button type="button" id="cancel-status-btn" class="btn btn-sm btn-secondary">Hủy</button>
+            </form>
+        </div>
+        </div>
+    </div>
+
+    <h5 class="mt-4 mb-3">Danh sách món</h5>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tên món</th>
+                <th>Kích thước</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>@item.MenuItemSize?.MenuItem?.Name ?? item.Combo?.Name</td>
+                    <td>@item.MenuItemSize?.SizeName</td>
+                    <td>@item.Quantity</td>
+                    <td>@((item.TotalPrice ?? 0).ToString("N0")) đ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const editBtn = document.getElementById("edit-status-btn");
+        const cancelBtn = document.getElementById("cancel-status-btn");
+        const statusForm = document.getElementById("status-form");
+        const statusDisplay = document.getElementById("status-display");
+
+        editBtn.addEventListener("click", () => {
+            statusDisplay.classList.add("d-none");
+            editBtn.classList.add("d-none");
+            statusForm.classList.remove("d-none");
+        });
+
+        cancelBtn.addEventListener("click", () => {
+            statusDisplay.classList.remove("d-none");
+            editBtn.classList.remove("d-none");
+            statusForm.classList.add("d-none");
+        });
+    });
+</script>

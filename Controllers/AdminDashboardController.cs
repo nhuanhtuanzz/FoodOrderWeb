@@ -193,7 +193,6 @@ namespace FoodOrderWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    // Xử lý upload ảnh
                     if (imageFile != null && imageFile.Length > 0)
                     {
                         var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products");
@@ -254,7 +253,6 @@ namespace FoodOrderWeb.Controllers
             {
                 try
                 {
-                    // Nếu upload ảnh mới → ghi đè ảnh cũ
                     if (imageFile != null && imageFile.Length > 0)
                     {
                         var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products");
@@ -273,7 +271,6 @@ namespace FoodOrderWeb.Controllers
                     }
                     else
                     {
-                        // Nếu không chọn ảnh mới → giữ lại ảnh cũ
                         product.ImageUrl = existingProduct.ImageUrl;
                     }
 

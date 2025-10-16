@@ -1,9 +1,6 @@
 ﻿using FoodOrderWeb.Models;
 using Microsoft.AspNetCore.Mvc;
-
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FoodOrderWeb.Models;
 using System.Linq;
 
 public class DetailsController : Controller

@@ -1,0 +1,32 @@
+﻿@model FoodOrderWeb.Models.Voucher
+@{
+    ViewData["Title"] = "Chi tiết Voucher";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white fw-bold">
+            <i class="fa fa-ticket me-1"></i> Chi tiết Voucher
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Mã:</dt>
+                <dd class="col-sm-9">@Model.Code</dd>
+                <dt class="col-sm-3">Mô tả:</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+                <dt class="col-sm-3">Giảm (%):</dt>
+                <dd class="col-sm-9">@Model.DiscountPercent</dd>
+                <dt class="col-sm-3">Giảm (VNĐ):</dt>
+                <dd class="col-sm-9">@Model.DiscountAmount?.ToString("N0")</dd>
+                <dt class="col-sm-3">Ngày bắt đầu:</dt>
+                <dd class="col-sm-9">@Model.StartDate.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-sm-3">Ngày kết thúc:</dt>
+                <dd class="col-sm-9">@Model.EndDate.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-sm-3">Trạng thái:</dt>
+                <dd class="col-sm-9">@((Model.IsActive) ? "Kích hoạt" : "Không hoạt động")</dd>
+            </dl>
+            <a asp-action="Edit" asp-route-id="@Model.VoucherId" class="btn btn-warning text-white">Sửa</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </div>
+</div>
